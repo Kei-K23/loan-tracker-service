@@ -18,7 +18,7 @@ export class RolesService {
   }
 
   async findOne(id: string) {
-    return await this.prisma.role.findUnique({
+    return await this.prisma.role.findUniqueOrThrow({
       where: {
         id,
       },
