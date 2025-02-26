@@ -5,13 +5,13 @@ export class UserEntity implements User {
   @ApiProperty()
   id: string;
   @ApiProperty()
-  name: string;
+  username: string;
   @ApiProperty()
   email: string;
   @ApiProperty()
   password: string;
-  @ApiProperty({ required: false, default: 'USER' })
-  role: string | null;
+  @ApiProperty()
+  roleId: string;
   @ApiProperty()
   createdAt: Date;
   @ApiProperty()
