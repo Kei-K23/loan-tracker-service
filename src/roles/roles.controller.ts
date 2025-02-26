@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -32,19 +33,22 @@ export class RolesController {
 
   @Get(':id')
   @ApiOkResponse({ type: RoleEntity })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.rolesService.findOne(id);
   }
 
   @Patch(':id')
   @ApiOkResponse({ type: RoleEntity })
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateRoleDto: UpdateRoleDto,
+  ) {
     return this.rolesService.update(id, updateRoleDto);
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: RoleEntity })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.rolesService.remove(id);
   }
 }
