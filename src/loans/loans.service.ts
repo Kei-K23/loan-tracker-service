@@ -14,11 +14,15 @@ export class LoansService {
   }
 
   async findAll() {
-    return await this.prisma.loan.findMany();
+    return await this.prisma.loan.findMany({
+      include: {
+        user: true,
+      },
+    });
   }
 
   async findOne(id: string) {
-    return await this.prisma.loan.findUnique({
+    return await this.prisma.loan.findUniqueOrThrow({
       where: { id },
     });
   }

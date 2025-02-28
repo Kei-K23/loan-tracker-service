@@ -1,34 +1,56 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { LoansService } from './loans.service';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { UpdateLoanDto } from './dto/update-loan.dto';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { LoanEntity } from './entities/loan.entity';
 
-@Controller('loans')
+@Controller('/api/v1/loans')
+@ApiTags('loans')
 export class LoansController {
   constructor(private readonly loansService: LoansService) {}
 
   @Post()
-  create(@Body() createLoanDto: CreateLoanDto) {
-    return this.loansService.create(createLoanDto);
+  @ApiCreatedResponse({ type: LoanEntity })
+  async create(@Body() createLoanDto: CreateLoanDto) {
+    return new LoanEntity(await this.loansService.create(createLoanDto));
   }
 
   @Get()
-  findAll() {
-    return this.loansService.findAll();
+  @ApiOkResponse({ type: LoanEntity, isArray: true })
+  async findAll() {
+    return (await this.loansService.findAll()).map(
+      (loan) => new LoanEntity(loan),
+    );
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.loansService.findOne(+id);
+  @ApiOkResponse({ type: LoanEntity })
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return new LoanEntity(await this.loansService.findOne(id));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLoanDto: UpdateLoanDto) {
-    return this.loansService.update(+id, updateLoanDto);
+  @ApiOkResponse({ type: LoanEntity })
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateLoanDto: UpdateLoanDto,
+  ) {
+    return new LoanEntity(await this.loansService.update(id, updateLoanDto));
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.loansService.remove(+id);
+  @ApiOkResponse({ type: LoanEntity })
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    return new LoanEntity(await this.loansService.remove(id));
   }
 }

@@ -1,25 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { $Enums } from '@prisma/client';
 import {
-  IsDecimal,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsPositive,
   IsString,
   IsUUID,
-  MinLength,
 } from 'class-validator';
 
 export class CreateLoanDto {
-  @IsDecimal()
+  @IsNumber()
   @IsNotEmpty()
-  @MinLength(1)
   @IsPositive()
   @ApiProperty()
   amount: number;
-  @IsDecimal()
+  @IsNumber()
   @IsNotEmpty()
-  @MinLength(1)
   @IsPositive()
   @ApiProperty()
   interestRate: number;

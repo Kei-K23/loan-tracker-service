@@ -37,7 +37,7 @@ model Loan {
   id           String     @id @default(uuid())
   amount       Float
   interestRate Float
-  status       LoanStatus
+  status       LoanStatus @default(PENDING)
   userId       String
   user         User       @relation(fields: [userId], references: [id])
   payments     Payment[]
