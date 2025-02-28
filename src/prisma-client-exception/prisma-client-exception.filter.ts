@@ -25,6 +25,14 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
           statusCode: HttpStatus.CONFLICT,
         });
         break;
+      // TODO Error code is not correct
+      case 'P2006':
+        response.status(HttpStatus.CONFLICT).json({
+          message,
+          error: 'Provided value is not valid',
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+        break;
       // Add More Prisma client exception if it's needed
       default:
         super.catch(exception, host);

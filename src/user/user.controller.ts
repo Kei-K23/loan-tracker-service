@@ -7,12 +7,19 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
+import { JWTAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('/api/v1/users')
 @ApiTags('users')
@@ -26,7 +33,9 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(JWTAuthGuard)
   @ApiOkResponse({ type: UserEntity, isArray: true })
+  @ApiBearerAuth()
   async findAll() {
     return (await this.userService.findAll()).map(
       (user) => new UserEntity(user),

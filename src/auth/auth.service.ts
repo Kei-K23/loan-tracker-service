@@ -22,11 +22,7 @@ export class AuthService {
         id: true,
         email: true,
         password: true,
-        role: {
-          select: {
-            id: true,
-          },
-        },
+        role: true,
       },
     });
 
@@ -41,7 +37,7 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign({
         userId: existingUser.id,
-        roleId: existingUser.role.id,
+        role: existingUser.role,
       }),
     };
   }

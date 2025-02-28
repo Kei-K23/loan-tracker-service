@@ -17,6 +17,7 @@ async function bootstrap() {
     .setDescription(
       'The Loan Tracker Service API allows users to apply for loans, manage repayments, and track their loan status',
     )
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, documentConfig);
   SwaggerModule.setup('/swagger', app, document);

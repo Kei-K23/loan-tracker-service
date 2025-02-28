@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { USER_ROLES } from '@prisma/client';
 import {
   IsEmail,
   IsNotEmpty,
@@ -34,6 +35,6 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
-  roleId: string;
+  @ApiProperty({ required: false })
+  role?: USER_ROLES;
 }
