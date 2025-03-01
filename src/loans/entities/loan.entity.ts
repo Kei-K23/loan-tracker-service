@@ -8,11 +8,15 @@ export class LoanEntity implements Loan {
   @ApiProperty()
   amount: number;
   @ApiProperty()
+  totalPayable: number;
+  @ApiProperty()
   interestRate: number;
   @ApiProperty()
   status: $Enums.LoanStatus;
   @ApiProperty()
   userId: string;
+  @ApiProperty()
+  duration: Date;
   @ApiProperty()
   createdAt: Date;
   @ApiProperty()

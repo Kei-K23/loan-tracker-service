@@ -1,36 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { $Enums } from '@prisma/client';
 import {
   IsDateString,
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsPositive,
   IsString,
-  IsUUID,
 } from 'class-validator';
 
-export class CreateLoanDto {
+export class CreatePaymentDto {
   @IsNumber()
   @IsNotEmpty()
   @IsPositive()
   @ApiProperty()
   amount: number;
-  @IsNumber()
-  @IsNotEmpty()
-  @IsPositive()
-  @ApiProperty()
-  interestRate: number;
-
-  @ApiProperty({ required: false })
-  @IsEnum($Enums.LoanStatus)
-  status?: $Enums.LoanStatus;
-
-  @ApiProperty()
   @IsDateString()
-  duration: Date;
-
-  @IsUUID()
+  @ApiProperty()
+  date: Date;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  loanId: string;
   @IsString()
   @IsNotEmpty()
   @ApiProperty()

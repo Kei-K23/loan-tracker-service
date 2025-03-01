@@ -33,6 +33,7 @@ enum USER_ROLES {
 model Loan {
   id           String     @id @default(uuid())
   amount       Float
+  totalPayable Float      @default(0)
   interestRate Float
   status       LoanStatus @default(PENDING)
   duration     DateTime
