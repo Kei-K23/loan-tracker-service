@@ -20,6 +20,9 @@ import {
 } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 import { JWTAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { Roles } from 'src/auth/decorator/roles.decorator';
+import { USER_ROLES } from '@prisma/client';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
 
 @Controller('/api/v1/users')
 @ApiTags('users')
@@ -33,7 +36,8 @@ export class UserController {
   }
 
   @Get()
-  @UseGuards(JWTAuthGuard)
+  @Roles(USER_ROLES.ADMIN)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity, isArray: true })
   @ApiBearerAuth()
   async findAll() {
