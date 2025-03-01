@@ -30,7 +30,10 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @Roles(USER_ROLES.ADMIN)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   @ApiCreatedResponse({ type: UserEntity })
+  @ApiBearerAuth()
   async create(@Body() createUserDto: CreateUserDto) {
     return new UserEntity(await this.userService.create(createUserDto));
   }
@@ -47,13 +50,19 @@ export class UserController {
   }
 
   @Get(':id')
+  @Roles(USER_ROLES.ADMIN)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
+  @ApiBearerAuth()
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return new UserEntity(await this.userService.findOne(id));
   }
 
   @Patch(':id')
+  @Roles(USER_ROLES.ADMIN)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
+  @ApiBearerAuth()
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -62,7 +71,10 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Roles(USER_ROLES.ADMIN)
+  @UseGuards(JWTAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
+  @ApiBearerAuth()
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return new UserEntity(await this.userService.remove(id));
   }
