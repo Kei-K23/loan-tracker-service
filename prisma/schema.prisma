@@ -34,6 +34,7 @@ model Loan {
   id           String     @id @default(uuid())
   amount       Float
   totalPayable Float      @default(0)
+  totalPaid    Float      @default(0)
   interestRate Float
   status       LoanStatus @default(PENDING)
   duration     DateTime

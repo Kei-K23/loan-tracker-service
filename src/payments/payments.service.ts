@@ -29,6 +29,27 @@ export class PaymentsService {
       throw new BadRequestException('Loan is already paid completely');
     }
 
+    const newTotalPaidAmount = loan.totalPaid + createPaymentDto.amount;
+
+    if (newTotalPaidAmount > loan.totalPayable) {
+      throw new BadRequestException('Invalid repayment amount');
+    }
+
+    // Subtract totalPayable amount and when payable amount is equal to zero that mean loan payment is complete and loan status will changed to PAID
+    await this.prisma.loan.update({
+      where: {
+        id: createPaymentDto.loanId,
+        userId: createPaymentDto.userId,
+      },
+      data: {
+        totalPaid: newTotalPaidAmount,
+        status:
+          newTotalPaidAmount === loan.totalPayable
+            ? LoanStatus.PAID
+            : loan.status,
+      },
+    });
+
     return await this.prisma.payment.create({
       data: createPaymentDto,
     });
