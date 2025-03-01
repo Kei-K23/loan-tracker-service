@@ -6,20 +6,24 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
-
-// TODO: Read from .env
-export const JWT_SECRET = 'gIvunfRAdLvggxYA/eeHeb2Dh99hfBmt7iHPLlFIk7M=';
+import { AppConfigService } from 'src/app-config/app-config.service';
+import { AppConfigModule } from 'src/app-config/app-config.module';
 
 @Module({
   imports: [
+    AppConfigModule,
     PrismaModule,
     UserModule,
     PassportModule,
-    JwtModule.register({
-      secret: JWT_SECRET,
-      signOptions: {
-        expiresIn: '1d',
-      },
+    JwtModule.registerAsync({
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
+      useFactory: (appConfigService: AppConfigService) => ({
+        secret: appConfigService.getJwtSecret() || 'THIS_IS_SUPER_SECRET_KEY',
+        signOptions: {
+          expiresIn: '1d',
+        },
+      }),
     }),
   ],
   controllers: [AuthController],

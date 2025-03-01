@@ -30,6 +30,7 @@ export class LoansController {
   constructor(private readonly loansService: LoansService) {}
 
   @Post()
+  @Roles(USER_ROLES.USER)
   @UseGuards(JWTAuthGuard)
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: LoanEntity })
