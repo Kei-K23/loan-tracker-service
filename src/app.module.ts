@@ -10,6 +10,10 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { NotificationsService } from './notifications/notifications.service';
+import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -30,7 +34,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
       ],
     }),
     EmailModule,
+    NotificationsModule,
   ],
-  providers: [EmailService],
+  providers: [EmailService, NotificationsService],
 })
 export class AppModule {}
