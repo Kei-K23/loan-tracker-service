@@ -1,99 +1,99 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Loan Tracker Service - System Architecture
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 1. Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+The **Loan Tracker Service** is a backend system that allows users to apply for loans, track their payments, receive notifications, and manage their accounts. The system is built using **Node.js/NestJS**, **Prisma ORM**, and **PostgreSQL**, with a focus on security, scalability, and maintainability.
 
-## Description
+## 2. Tech Stack
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Backend Framework**: NestJS (TypeScript-based)
+- **Database**: PostgreSQL
+- **ORM**: Prisma ORM
+- **Authentication**: JWT-based authentication
+- **Authorization**: Role-Based Access Control (RBAC)
+- **Caching**: Redis
+- **Queue Management**: BullMQ (Redis-based)
+- **Background Jobs**: Cron jobs for scheduled notifications
+- **Logging & Monitoring**: Winston + Prometheus/Grafana
+- **Security**: API rate limiting, input validation, secure headers
 
-## Project setup
+## 3. System Architecture
 
-```bash
-$ pnpm install
-```
+### 3.1 Module Structure (NestJS)
 
-## Compile and run the project
+The system is designed in a **modular structure** to ensure scalability and maintainability:
 
-```bash
-# development
-$ pnpm run start
+- **Auth Module**: Handles authentication, JWT, and user sessions.
+- **User Module**: Manages user registration, roles, profiles.
+- **Loan Module**: Manages loan applications, status updates.
+- **Payment Module**: Handles loan repayments and overdue tracking.
+- **Notification Module**: Sends reminders for due and overdue payments.
+- **AuditLog Module**: Tracks user actions for accountability.
 
-# watch mode
-$ pnpm run start:dev
+### 3.2 Database Schema (Prisma)
 
-# production mode
-$ pnpm run start:prod
-```
+The schema follows best practices:
 
-## Run tests
+- **Entities**: Users, Loans, Payments, Notifications, Profiles, Audit Logs.
+- **Relations**:
+  - One-to-many between **User and Loan**.
+  - One-to-many between **Loan and Payments**.
+  - One-to-one between **User and Profile**.
+  - One-to-many between **User and Notifications**.
+- **Indexes**: Unique constraints on `email`, `username`, `userId`.
+- **Default Values**: UUID for primary keys, `now()` for timestamps.
 
-```bash
-# unit tests
-$ pnpm run test
+## 4. Security Best Practices
 
-# e2e tests
-$ pnpm run test:e2e
+- **JWT Authentication**: Access tokens with expiration, refresh tokens for long-term sessions.
+- **Role-Based Access Control (RBAC)**: Enforce `ADMIN`, `MANAGER`, `USER` permissions using NestJS Guards.
+- **API Rate Limiting**: Implement `nestjs/throttler` to prevent abuse.
+- **Input Validation**: Use `class-validator` and `class-transformer` to validate incoming data.
+- **Database Security**: Store passwords with bcrypt hashing and implement environment-based DB credentials.
 
-# test coverage
-$ pnpm run test:cov
-```
+## 5. Payment Reminders & Notifications
 
-## Deployment
+- **Scheduled Cron Jobs**:
+  - **Daily reminder**: Notify users of upcoming payments.
+  - **Overdue alert**: Alert users of overdue payments and penalties.
+  - **Audit Log Cleanup**: Periodically archive old logs.
+- **Implementation**:
+  - Use `nestjs/schedule` for cron jobs.
+  - Store messages in the Notification table.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 7. API Endpoints (RESTful Design)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Authentication
 
-```bash
-$ pnpm install -g mau
-$ mau deploy
-```
+- `POST /auth/register` – Register new users.
+- `POST /auth/login` – Authenticate users and return JWT.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Loan Management
 
-## Resources
+- `POST /loans/apply` – Apply for a loan.
+- `GET /loans/:id` – Get loan details.
+- `PATCH /loans/:id/approve` – Approve a loan (Admin only).
+- `GET /loans/user/:userId` – Get loans for a specific user.
 
-Check out a few resources that may come in handy when working with NestJS:
+### Payment Processing
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- `POST /payments/:loanId` – Make a payment for a loan.
+- `GET /payments/user/:userId` – Get payment history for a user.
+- `GET /payments/overdue` – Get overdue payments.
 
-## Support
+### Notifications
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- `GET /notifications/user/:userId` – Fetch user notifications.
+- `PATCH /notifications/:id/read` – Mark notification as read.
 
-## Stay in touch
+## 8. Deployment & Scalability
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **Docker**: Containerized deployment.
+- **CI/CD**: GitHub Actions for automated tests & deployments.
+- **Load Balancing**: Use **NGINX** with multiple instances.
+- **Database Scaling**: Read replicas for PostgreSQL, optimize indexes.
+- **Microservices (Future Scope)**: Extract Payments & Notifications into microservices for scalability.
 
-## License
+## 9. Conclusion
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This architecture ensures **security, scalability, and maintainability** while following best practices of build backend service and handling complex business logic.
