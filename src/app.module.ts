@@ -7,6 +7,8 @@ import { AppConfigModule } from './app-config/app-config.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ReminderModule } from './reminder/reminder.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EmailService } from './email/email.service';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     PaymentsModule,
     ReminderModule,
     ScheduleModule.forRoot(),
+    EmailModule,
   ],
+  providers: [EmailService],
 })
 export class AppModule {}

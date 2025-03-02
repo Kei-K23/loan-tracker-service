@@ -8,4 +8,16 @@ export class AppConfigService {
   getJwtSecret() {
     return this.configService.get<string>('JWT_SECRET_KEY');
   }
+
+  getEmailHost() {
+    return this.configService.get<string>('EMAIL_HOST');
+  }
+
+  getEmailUser() {
+    return this.configService.get<string>('EMAIL_USER');
+  }
+
+  getEmailPass() {
+    return this.configService.get<string>('EMAIL_PASS');
+  }
 }
