@@ -23,6 +23,7 @@ import { Roles } from 'src/auth/decorator/roles.decorator';
 import { USER_ROLES } from '@prisma/client';
 import { JWTAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('/api/v1/loans')
 @ApiTags('loans')
@@ -31,7 +32,7 @@ export class LoansController {
 
   @Post()
   @Roles(USER_ROLES.USER)
-  @UseGuards(JWTAuthGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: LoanEntity })
   async create(@Body() createLoanDto: CreateLoanDto) {
@@ -40,7 +41,7 @@ export class LoansController {
 
   @Get()
   @Roles(USER_ROLES.ADMIN)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiOkResponse({ type: LoanEntity, isArray: true })
   @ApiBearerAuth()
   async findAll() {
@@ -51,7 +52,7 @@ export class LoansController {
 
   @Get(':id')
   @Roles(USER_ROLES.ADMIN, USER_ROLES.USER)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiOkResponse({ type: LoanEntity })
   @ApiBearerAuth()
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
@@ -60,7 +61,7 @@ export class LoansController {
 
   @Patch(':id')
   @Roles(USER_ROLES.ADMIN)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiOkResponse({ type: LoanEntity })
   @ApiBearerAuth()
   async update(
@@ -72,7 +73,7 @@ export class LoansController {
 
   @Delete(':id')
   @Roles(USER_ROLES.ADMIN)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiOkResponse({ type: LoanEntity })
   @ApiBearerAuth()
   async remove(@Param('id', ParseUUIDPipe) id: string) {

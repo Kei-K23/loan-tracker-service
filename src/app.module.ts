@@ -9,6 +9,7 @@ import { ReminderModule } from './reminder/reminder.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -20,6 +21,14 @@ import { EmailModule } from './email/email.module';
     PaymentsModule,
     ReminderModule,
     ScheduleModule.forRoot(),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 10000,
+          limit: 10,
+        },
+      ],
+    }),
     EmailModule,
   ],
   providers: [EmailService],

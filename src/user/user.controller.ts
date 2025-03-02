@@ -23,6 +23,7 @@ import { JWTAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { USER_ROLES } from '@prisma/client';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('/api/v1/users')
 @ApiTags('users')
@@ -31,7 +32,7 @@ export class UserController {
 
   @Post()
   @Roles(USER_ROLES.ADMIN)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiCreatedResponse({ type: UserEntity })
   @ApiBearerAuth()
   async create(@Body() createUserDto: CreateUserDto) {
@@ -40,7 +41,7 @@ export class UserController {
 
   @Get()
   @Roles(USER_ROLES.ADMIN)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiOkResponse({ type: UserEntity, isArray: true })
   @ApiBearerAuth()
   async findAll() {
@@ -51,7 +52,7 @@ export class UserController {
 
   @Get(':id')
   @Roles(USER_ROLES.ADMIN)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiOkResponse({ type: UserEntity })
   @ApiBearerAuth()
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
@@ -60,7 +61,7 @@ export class UserController {
 
   @Patch(':id')
   @Roles(USER_ROLES.ADMIN)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiOkResponse({ type: UserEntity })
   @ApiBearerAuth()
   async update(
@@ -72,7 +73,7 @@ export class UserController {
 
   @Delete(':id')
   @Roles(USER_ROLES.ADMIN)
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiOkResponse({ type: UserEntity })
   @ApiBearerAuth()
   async remove(@Param('id', ParseUUIDPipe) id: string) {

@@ -11,6 +11,7 @@ import { PaymentEntity } from './entities/payment.entity';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { JWTAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('/api/v1/payments')
 @ApiTags('payments')
@@ -19,7 +20,7 @@ export class PaymentsController {
 
   @Post()
   @Roles('USER')
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiCreatedResponse({ type: PaymentEntity })
   @ApiBearerAuth()
   create(@Body() createPaymentDto: CreatePaymentDto) {
@@ -28,7 +29,7 @@ export class PaymentsController {
 
   @Get()
   @Roles('ADMIN')
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: PaymentEntity, isArray: true })
   findAll() {
@@ -37,7 +38,7 @@ export class PaymentsController {
 
   @Get(':id')
   @Roles('ADMIN', 'USER')
-  @UseGuards(JWTAuthGuard, RolesGuard)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: PaymentEntity })
   findOne(@Param('id') id: string) {
