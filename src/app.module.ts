@@ -12,8 +12,6 @@ import { EmailModule } from './email/email.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { NotificationsService } from './notifications/notifications.service';
 import { NotificationsModule } from './notifications/notifications.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [

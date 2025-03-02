@@ -8,7 +8,7 @@ export class NotificationEntity implements Notification {
   message: string;
   @ApiProperty()
   userId: string;
-  @ApiProperty()
+  @ApiProperty({ default: false })
   read: boolean;
   @ApiProperty()
   createdAt: Date;

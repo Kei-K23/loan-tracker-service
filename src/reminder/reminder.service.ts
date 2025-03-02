@@ -3,13 +3,16 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { addDays, startOfDay } from 'date-fns';
 import { EmailService } from 'src/email/email.service';
 import { LoansService } from 'src/loans/loans.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class ReminderService {
   constructor(
     private readonly loansService: LoansService,
     private readonly emailService: EmailService,
+    private readonly notificationService: NotificationsService,
   ) {}
+
   private readonly logger = new Logger(ReminderService.name);
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
@@ -21,10 +24,15 @@ export class ReminderService {
       await this.loansService.getLoansWithUpcomingPayments(threeDaysLater);
 
     for (const loan of upcomingLoans) {
+      // TODO: Need to format due date format
       await this.emailService.sendEmail({
         to: loan.user.email,
         subject: 'Upcoming Loan Payment Due',
         text: `Dear ${loan.user.username}, your loan payment of ${loan.amount} is due on ${loan.payments[0].dueDate.toISOString()}. Please make the payment on time.`,
+      });
+      await this.notificationService.create({
+        message: `🔔 Your loan payment of $${loan.amount} is due on ${loan.payments[0].dueDate.toISOString()}. Please ensure timely payment to avoid penalties.`,
+        userId: loan.userId,
       });
     }
 
@@ -45,6 +53,11 @@ export class ReminderService {
         subject: 'Final alert Loan Payment Due (Tomorrow)',
         text: `Dear ${loan.user.username}, your loan payment of ${loan.amount} is due on ${loan.payments[0].dueDate.toISOString()} (Tomorrow). Please make the payment on time.`,
       });
+
+      await this.notificationService.create({
+        message: `🚨 Your loan payment of $${loan.amount} is due today! Kindly make the payment to avoid any late fees.`,
+        userId: loan.userId,
+      });
     }
 
     this.logger.log(
@@ -61,6 +74,11 @@ export class ReminderService {
         to: loan.user.email,
         subject: 'Overdue Loan Payment Reminder',
         text: `Dear ${loan.user.username}, your loan payment of ${loan.amount} is overdue since ${loan.payments[0].dueDate.toISOString()}. Please make the payment as soon as possible to avoid additional penalties.`,
+      });
+
+      await this.notificationService.create({
+        message: `🚨 Urgent: Your loan payment of ${loan.amount} is overdue since {{dueDate}}! Please pay immediately to avoid penalties.`,
+        userId: loan.userId,
       });
     }
 

@@ -8,9 +8,11 @@ import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { AppConfigService } from 'src/app-config/app-config.service';
 import { AppConfigModule } from 'src/app-config/app-config.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
+    NotificationsModule,
     AppConfigModule,
     PrismaModule,
     UserModule,

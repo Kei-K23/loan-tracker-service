@@ -7,16 +7,21 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoanStatus } from '@prisma/client';
 import { addMonths, isBefore, startOfDay } from 'date-fns';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class PaymentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
   async create(createPaymentDto: CreatePaymentDto) {
     // Check it's loan approved to make repayment
     const loan = await this.prisma.loan.findUnique({
       where: { id: createPaymentDto.loanId, userId: createPaymentDto.userId },
       select: {
+        id: true,
         status: true,
         userId: true,
         totalPaid: true,
@@ -34,14 +39,27 @@ export class PaymentsService {
     });
 
     if (!loan) {
+      await this.notificationsService.create({
+        message: `❗ Loan not found to make repayment. Please check your account balance or try again.`,
+        userId: createPaymentDto.userId,
+      });
       throw new NotFoundException('Loan not found to make repayment!');
     }
 
     if (loan.status === LoanStatus.PENDING) {
+      await this.notificationsService.create({
+        message: `❗ Loan is still in pending status. Please check your loan status or try again.`,
+        userId: createPaymentDto.userId,
+      });
       throw new BadRequestException('Loan is still in pending status!');
     }
 
     if (loan.status === LoanStatus.PAID) {
+      await this.notificationsService.create({
+        message: `❗ Loan is already paid completely. Please check your loan status.`,
+        userId: createPaymentDto.userId,
+      });
+
       throw new BadRequestException('Loan is already paid completely!');
     }
 
@@ -55,6 +73,10 @@ export class PaymentsService {
     if (remainingPaidPenaltyAmount > 0) {
       // Remaining penalty amount exist
       if (calculatedPaymentAmount <= remainingPaidPenaltyAmount) {
+        await this.notificationsService.create({
+          message: `❗ Your payment of $${createPaymentDto.amount} for loan #${loan.id} failed. Please check your account balance or try again.`,
+          userId: loan.userId,
+        });
         throw new Error(
           'Insufficient payment amount to pay remaining penalty amount',
         );
@@ -96,6 +118,10 @@ export class PaymentsService {
       newTotalPayablePenalty === newTotalPaidPenalty;
 
     if (newTotalPaidAmount > loan.totalPayable) {
+      await this.notificationsService.create({
+        message: `❗ Prevent over payments process. Please check your account balance or try again.`,
+        userId: loan.userId,
+      });
       throw new BadRequestException('Prevent over payments process!');
     }
 
@@ -113,6 +139,10 @@ export class PaymentsService {
       },
     });
 
+    await this.notificationsService.create({
+      message: `✅ Success! We have received your payment of $${createPaymentDto.amount} for loan #${loan.id}. Thank you for staying on track!`,
+      userId: loan.userId,
+    });
     return await this.prisma.payment.create({
       data: {
         ...createPaymentDto,

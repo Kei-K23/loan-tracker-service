@@ -42,6 +42,7 @@ export class LoansService {
   }
 
   async update(id: string, updateLoanDto: UpdateLoanDto) {
+    // TODO When making Loan approved or rejected, then call notification service
     return await this.prisma.loan.update({
       where: { id },
       data: updateLoanDto,
