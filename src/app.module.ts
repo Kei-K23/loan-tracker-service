@@ -12,6 +12,7 @@ import { EmailModule } from './email/email.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { NotificationsService } from './notifications/notifications.service';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AuditLogsModule } from './audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     }),
     EmailModule,
     NotificationsModule,
+    AuditLogsModule,
   ],
   providers: [EmailService, NotificationsService],
 })
