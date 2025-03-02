@@ -9,6 +9,8 @@ export class PaymentEntity implements Payment {
   @ApiProperty()
   date: Date;
   @ApiProperty()
+  dueDate: Date;
+  @ApiProperty()
   loanId: string;
   @ApiProperty()
   userId: string;

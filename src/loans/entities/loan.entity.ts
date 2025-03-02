@@ -14,6 +14,12 @@ export class LoanEntity implements Loan {
   @ApiProperty()
   interestRate: number;
   @ApiProperty()
+  penaltyRate: number;
+  @ApiProperty()
+  totalPayablePenalty: number;
+  @ApiProperty()
+  totalPaidPenalty: number;
+  @ApiProperty()
   status: $Enums.LoanStatus;
   @ApiProperty()
   userId: string;

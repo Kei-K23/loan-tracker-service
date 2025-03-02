@@ -31,18 +31,21 @@ enum USER_ROLES {
 }
 
 model Loan {
-  id           String     @id @default(uuid())
-  amount       Float
-  totalPayable Float      @default(0)
-  totalPaid    Float      @default(0)
-  interestRate Float
-  status       LoanStatus @default(PENDING)
-  duration     DateTime
-  userId       String
-  user         User       @relation(fields: [userId], references: [id])
-  payments     Payment[]
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id                  String     @id @default(uuid())
+  amount              Float
+  totalPayable        Float      @default(0)
+  totalPaid           Float      @default(0)
+  interestRate        Float
+  penaltyRate         Float      @default(3) // Default Over due penalty rate fee
+  totalPayablePenalty Float      @default(0)
+  totalPaidPenalty    Float      @default(0)
+  status              LoanStatus @default(PENDING)
+  duration            DateTime
+  userId              String
+  user                User       @relation(fields: [userId], references: [id])
+  payments            Payment[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 }
 
 enum LoanStatus {
@@ -54,8 +57,9 @@ enum LoanStatus {
 
 model Payment {
   id        String   @id @default(uuid())
-  amount    Float
+  amount    Float    @default(0)
   date      DateTime @default(now())
+  dueDate   DateTime
   loanId    String
   loan      Loan     @relation(fields: [loanId], references: [id])
   createdAt DateTime @default(now())
