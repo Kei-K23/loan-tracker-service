@@ -86,12 +86,12 @@ The system is divided into several layers and components, each responsible for s
   - The JWT contains the user's ID, role, and expiration time.
   - JWTs are validated on each request to ensure the user is authenticated.
 - **Authorization**: Role-Based Access Control (RBAC)
-  - Users are assigned roles (`ADMIN`, `USER`, `MANAGER`).
+  - Users are assigned roles (`ADMIN`, `USER`).
   - Guards are used to restrict access to endpoints based on roles (e.g., only `ADMIN` can approve loans).
 
 #### Key Components:
 
-- **AuthGuard**: Ensures the user is authenticated.
+- **JWTAuthGuard**: Ensures the user is authenticated using JWT.
 - **RolesGuard**: Restricts access based on user roles.
 
 ---
@@ -118,11 +118,9 @@ The system is divided into several layers and components, each responsible for s
 
 ### **2.6 Logging & Monitoring Layer**
 
-- **Library**: `nestjs-pino` or `winston` for logging.
-- **Responsibilities**:
-  - Log all incoming requests and responses.
-  - Log errors and exceptions for debugging.
-  - Track user actions for auditing (stored in the `AuditLog` table).
+- Log all incoming requests and responses.
+- Log errors and exceptions for debugging.
+- Track user actions for auditing (stored in the `AuditLog` table).
 
 #### Key Features:
 
@@ -137,9 +135,8 @@ The system is divided into several layers and components, each responsible for s
 ### **3.1 Security**
 
 - Use **HTTPS** to encrypt data in transit.
-- Hash passwords using **bcrypt** or **argon2**.
-- Validate and sanitize all user inputs to prevent SQL injection and XSS attacks.
-- Use **CSRF tokens** for sensitive operations.
+- Hash passwords using **argon2**.
+- Validate and sanitize all user inputs to prevent SQL injection and XSS attacks using Pipe, Interceptor.
 
 ### **3.2 Rate Limiting**
 
@@ -151,11 +148,11 @@ The system is divided into several layers and components, each responsible for s
 - Use NestJS's built-in exception filters to handle errors.
 - Return standardized error responses (e.g., `{ statusCode: 400, message: "Bad Request" }`).
 
-### **3.4 Testing**
+### **3.4 Testing (Future)**
 
 - Write unit tests for services and controllers using **Jest**.
 - Write integration tests to test API endpoints.
-- Use mocking to isolate dependencies (e.g., mock Prisma Client).
+- Use mocking to isolate dependencies
 
 ### **3.5 Documentation**
 
@@ -174,16 +171,15 @@ The system is divided into several layers and components, each responsible for s
 ### **4.2 Database**
 
 - Use **PostgreSQL** as the primary database.
-- Set up automated backups and monitoring.
+- Set up automated backups and monitoring (Future).
 
-### **4.3 Hosting**
+### **4.3 Hosting (Future)**
 
-- Deploy the application on a cloud platform (e.g., AWS, Heroku, DigitalOcean).
 - Use **Docker** for containerization.
 
-### **4.4 CI/CD**
+### **4.4 CI/CD (Future)**
 
-- Set up a CI/CD pipeline (e.g., GitHub Actions, CircleCI) for automated testing and deployment.
+- Set up a CI/CD pipeline (e.g., GitHub Actions) for automated testing and deployment.
 
 ---
 
@@ -225,7 +221,6 @@ The system is divided into several layers and components, each responsible for s
 - **@nestjs/throttler**: For rate limiting.
 - **@nestjs/schedule**: For cron jobs.
 - **Nodemailer**: For sending emails.
-- **Jest**: For testing.
 - **Swagger**: For API documentation.
 
 ---
