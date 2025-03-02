@@ -9,10 +9,12 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { AppConfigService } from 'src/app-config/app-config.service';
 import { AppConfigModule } from 'src/app-config/app-config.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
+import { AuditLogsModule } from 'src/audit-logs/audit-logs.module';
 
 @Module({
   imports: [
     NotificationsModule,
+    AuditLogsModule,
     AppConfigModule,
     PrismaModule,
     UserModule,

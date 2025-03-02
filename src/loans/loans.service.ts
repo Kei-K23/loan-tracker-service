@@ -4,10 +4,14 @@ import { UpdateLoanDto } from './dto/update-loan.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { addDays, differenceInCalendarMonths, startOfDay } from 'date-fns';
 import { LoanStatus } from '@prisma/client';
+import { AuditLogsService } from 'src/audit-logs/audit-logs.service';
 
 @Injectable()
 export class LoansService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly auditLogsService: AuditLogsService,
+  ) {}
 
   async create(createLoanDto: CreateLoanDto) {
     const durationInMonths = differenceInCalendarMonths(
@@ -21,6 +25,12 @@ export class LoansService {
       createLoanDto.amount *
         (createLoanDto.interestRate / 100) *
         (durationInMonths / 12);
+
+    await this.auditLogsService.create({
+      action: 'LOAN_APPLIED',
+      description: `User ${createLoanDto.userId} applied for a loan of $${createLoanDto.amount}.`,
+      userId: createLoanDto.userId,
+    });
 
     return await this.prisma.loan.create({
       data: { ...createLoanDto, totalPayable },
@@ -42,7 +52,7 @@ export class LoansService {
   }
 
   async update(id: string, updateLoanDto: UpdateLoanDto) {
-    // TODO When making Loan approved or rejected, then call notification service
+    // TODO When making Loan approved or rejected, then call notification service / Also same for audit logs
     return await this.prisma.loan.update({
       where: { id },
       data: updateLoanDto,
