@@ -1,14 +1,17 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { LoanStatus } from '@prisma/client';
+import { LoanStatus, Payment } from '@prisma/client';
 import { addMonths, isBefore, startOfDay } from 'date-fns';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { AuditLogsService } from 'src/audit-logs/audit-logs.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PaymentsService {
@@ -16,6 +19,7 @@ export class PaymentsService {
     private readonly prisma: PrismaService,
     private readonly notificationsService: NotificationsService,
     private readonly auditLogsService: AuditLogsService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async create(createPaymentDto: CreatePaymentDto) {
@@ -193,7 +197,16 @@ export class PaymentsService {
   }
 
   async findAll() {
-    return await this.prisma.payment.findMany();
+    const cachedValue = await this.cacheManager.get<Payment[]>('payments');
+
+    if (cachedValue) {
+      return cachedValue;
+    } else {
+      const payments = await this.prisma.payment.findMany();
+
+      await this.cacheManager.set('payments', payments);
+      return payments;
+    }
   }
 
   async findAllOverduePayments() {

@@ -1,12 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as argons2 from 'argon2';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     // Hash password
@@ -18,7 +24,14 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.prisma.user.findMany();
+    const cachedValue = await this.cacheManager.get<User[]>('users');
+    if (cachedValue) {
+      return cachedValue;
+    } else {
+      const users = await this.prisma.user.findMany();
+      await this.cacheManager.set('users', users);
+      return users;
+    }
   }
 
   async findOne(id: string) {

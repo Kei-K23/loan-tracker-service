@@ -36,7 +36,7 @@ export class LoansController {
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: LoanEntity })
   async create(@Body() createLoanDto: CreateLoanDto) {
-    return new LoanEntity(await this.loansService.create(createLoanDto));
+    return await this.loansService.create(createLoanDto);
   }
 
   @Get()
@@ -45,9 +45,7 @@ export class LoansController {
   @ApiOkResponse({ type: LoanEntity, isArray: true })
   @ApiBearerAuth()
   async findAll() {
-    return (await this.loansService.findAll()).map(
-      (loan) => new LoanEntity(loan),
-    );
+    return await this.loansService.findAll();
   }
 
   @Get('/user/:userId')
@@ -56,9 +54,7 @@ export class LoansController {
   @ApiOkResponse({ type: LoanEntity, isArray: true })
   @ApiBearerAuth()
   async findAllByUserId(@Param('userId', ParseUUIDPipe) userId: string) {
-    return (await this.loansService.findAll(userId)).map(
-      (loan) => new LoanEntity(loan),
-    );
+    return await this.loansService.findAll(userId);
   }
 
   @Get(':id')
@@ -67,7 +63,7 @@ export class LoansController {
   @ApiOkResponse({ type: LoanEntity })
   @ApiBearerAuth()
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return new LoanEntity(await this.loansService.findOne(id));
+    return await this.loansService.findOne(id);
   }
 
   @Patch(':id')
@@ -79,7 +75,7 @@ export class LoansController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateLoanDto: UpdateLoanDto,
   ) {
-    return new LoanEntity(await this.loansService.update(id, updateLoanDto));
+    return await this.loansService.update(id, updateLoanDto);
   }
 
   @Patch(':id/approve')
@@ -88,11 +84,9 @@ export class LoansController {
   @ApiOkResponse({ type: LoanEntity })
   @ApiBearerAuth()
   async loanApprove(@Param('id', ParseUUIDPipe) id: string) {
-    return new LoanEntity(
-      await this.loansService.update(id, {
-        status: LoanStatus.APPROVED,
-      }),
-    );
+    return await this.loansService.update(id, {
+      status: LoanStatus.APPROVED,
+    });
   }
 
   @Delete(':id')
@@ -101,6 +95,6 @@ export class LoansController {
   @ApiOkResponse({ type: LoanEntity })
   @ApiBearerAuth()
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    return new LoanEntity(await this.loansService.remove(id));
+    return await this.loansService.remove(id);
   }
 }

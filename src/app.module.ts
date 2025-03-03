@@ -13,6 +13,11 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { NotificationsService } from './notifications/notifications.service';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { createKeyv } from '@keyv/redis';
+import { Keyv } from 'keyv';
+import { CacheableMemory } from 'cacheable';
+import { AppConfigService } from './app-config/app-config.service';
 
 @Module({
   imports: [
@@ -31,6 +36,21 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
           limit: 10,
         },
       ],
+    }),
+    CacheModule.registerAsync({
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
+      isGlobal: true,
+      useFactory: (appConfigService: AppConfigService) => {
+        return {
+          stores: [
+            new Keyv({
+              store: new CacheableMemory({ ttl: 600, lruSize: 5000 }),
+            }),
+            createKeyv(appConfigService.getRedisURL()),
+          ],
+        };
+      },
     }),
     EmailModule,
     NotificationsModule,

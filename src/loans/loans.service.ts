@@ -1,16 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { UpdateLoanDto } from './dto/update-loan.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { addDays, differenceInCalendarMonths, startOfDay } from 'date-fns';
-import { LoanStatus } from '@prisma/client';
+import { Loan, LoanStatus } from '@prisma/client';
 import { AuditLogsService } from 'src/audit-logs/audit-logs.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class LoansService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly auditLogsService: AuditLogsService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async create(createLoanDto: CreateLoanDto) {
@@ -38,14 +41,20 @@ export class LoansService {
   }
 
   async findAll(userId?: string) {
-    return await this.prisma.loan.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        user: true,
-      },
-    });
+    const cachedValue = await this.cacheManager.get<Loan[]>(`loans-${userId}`);
+
+    if (cachedValue) {
+      return cachedValue;
+    } else {
+      const loans = await this.prisma.loan.findMany({
+        where: {
+          userId,
+        },
+      });
+
+      await this.cacheManager.set(`loans-${userId}`, loans);
+      return loans;
+    }
   }
 
   async findOne(id: string) {
