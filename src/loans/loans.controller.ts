@@ -20,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { LoanEntity } from './entities/loan.entity';
 import { Roles } from 'src/auth/decorator/roles.decorator';
-import { USER_ROLES } from '@prisma/client';
+import { LoanStatus, USER_ROLES } from '@prisma/client';
 import { JWTAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { ThrottlerGuard } from '@nestjs/throttler';
@@ -50,6 +50,17 @@ export class LoansController {
     );
   }
 
+  @Get('/user/:userId')
+  @Roles(USER_ROLES.ADMIN, USER_ROLES.USER)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
+  @ApiOkResponse({ type: LoanEntity, isArray: true })
+  @ApiBearerAuth()
+  async findAllByUserId(@Param('userId', ParseUUIDPipe) userId: string) {
+    return (await this.loansService.findAll(userId)).map(
+      (loan) => new LoanEntity(loan),
+    );
+  }
+
   @Get(':id')
   @Roles(USER_ROLES.ADMIN, USER_ROLES.USER)
   @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
@@ -69,6 +80,19 @@ export class LoansController {
     @Body() updateLoanDto: UpdateLoanDto,
   ) {
     return new LoanEntity(await this.loansService.update(id, updateLoanDto));
+  }
+
+  @Patch(':id/approve')
+  @Roles(USER_ROLES.ADMIN)
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
+  @ApiOkResponse({ type: LoanEntity })
+  @ApiBearerAuth()
+  async loanApprove(@Param('id', ParseUUIDPipe) id: string) {
+    return new LoanEntity(
+      await this.loansService.update(id, {
+        status: LoanStatus.APPROVED,
+      }),
+    );
   }
 
   @Delete(':id')

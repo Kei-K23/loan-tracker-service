@@ -36,6 +36,15 @@ export class PaymentsController {
     return this.paymentsService.findAll();
   }
 
+  @Get('/overdue')
+  @Roles('ADMIN')
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: PaymentEntity, isArray: true })
+  findAllOverduePayments() {
+    return this.paymentsService.findAllOverduePayments();
+  }
+
   @Get(':id')
   @Roles('ADMIN', 'USER')
   @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)

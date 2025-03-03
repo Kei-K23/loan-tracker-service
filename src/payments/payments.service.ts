@@ -196,6 +196,18 @@ export class PaymentsService {
     return await this.prisma.payment.findMany();
   }
 
+  async findAllOverduePayments() {
+    const today = startOfDay(new Date());
+
+    return await this.prisma.payment.findMany({
+      where: {
+        dueDate: {
+          lt: today,
+        },
+      },
+    });
+  }
+
   async findOne(id: string) {
     return await this.prisma.payment.findUnique({ where: { id } });
   }

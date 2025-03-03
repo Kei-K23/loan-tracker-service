@@ -37,8 +37,11 @@ export class LoansService {
     });
   }
 
-  async findAll() {
+  async findAll(userId?: string) {
     return await this.prisma.loan.findMany({
+      where: {
+        userId,
+      },
       include: {
         user: true,
       },
