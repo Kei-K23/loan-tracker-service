@@ -35,13 +35,18 @@ export class LoansService {
       userId: createLoanDto.userId,
     });
 
+    // Clear the cache
+    await this.cacheManager.del('loans');
+    await this.cacheManager.del(`loans-${createLoanDto.userId}`);
+
     return await this.prisma.loan.create({
       data: { ...createLoanDto, totalPayable },
     });
   }
 
   async findAll(userId?: string) {
-    const cachedValue = await this.cacheManager.get<Loan[]>(`loans-${userId}`);
+    const cacheKey = userId ? `loans-${userId}` : 'loans';
+    const cachedValue = await this.cacheManager.get<Loan[]>(cacheKey);
 
     if (cachedValue) {
       return cachedValue;
@@ -52,7 +57,7 @@ export class LoansService {
         },
       });
 
-      await this.cacheManager.set(`loans-${userId}`, loans);
+      await this.cacheManager.set(cacheKey, loans);
       return loans;
     }
   }
@@ -65,16 +70,24 @@ export class LoansService {
 
   async update(id: string, updateLoanDto: UpdateLoanDto) {
     // TODO When making Loan approved or rejected, then call notification service / Also same for audit logs
-    return await this.prisma.loan.update({
+    // Clear the cache
+
+    const loan = await this.prisma.loan.update({
       where: { id },
       data: updateLoanDto,
     });
+
+    await this.cacheManager.del('loans');
+    await this.cacheManager.del(`loans-${loan.userId}`);
   }
 
   async remove(id: string) {
-    return await this.prisma.loan.delete({
+    const loan = await this.prisma.loan.delete({
       where: { id },
     });
+
+    await this.cacheManager.del('loans');
+    await this.cacheManager.del(`loans-${loan.userId}`);
   }
 
   async getLoansWithUpcomingPayments(targetDate: Date) {

@@ -188,6 +188,8 @@ export class PaymentsService {
       userId: createPaymentDto.userId,
     });
 
+    // Clear the cache
+    await this.cacheManager.del('payments');
     return await this.prisma.payment.create({
       data: {
         ...createPaymentDto,
@@ -204,7 +206,7 @@ export class PaymentsService {
     } else {
       const payments = await this.prisma.payment.findMany();
 
-      await this.cacheManager.set('payments', payments);
+      await this.cacheManager.set('payments', payments, 60000);
       return payments;
     }
   }
