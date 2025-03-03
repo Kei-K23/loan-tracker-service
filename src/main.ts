@@ -21,10 +21,9 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, documentConfig);
-  SwaggerModule.setup('/swagger', app, document);
 
   app.use(
-    '/scalar-docs',
+    '/api-docs',
     apiReference({
       spec: {
         content: document,

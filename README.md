@@ -221,7 +221,8 @@ The system is divided into several layers and components, each responsible for s
 - **@nestjs/throttler**: For rate limiting.
 - **@nestjs/schedule**: For cron jobs.
 - **Nodemailer**: For sending emails.
-- **Swagger**: For API documentation.
+- **Scalar/Swagger**: For beautiful API documentation.
+- **Docker**: For containerization and easy deployment.
 
 ---
 
