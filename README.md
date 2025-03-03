@@ -223,10 +223,6 @@ The system is divided into several layers and components, each responsible for s
 - **Nodemailer**: For sending emails.
 - **Swagger**: For API documentation.
 
-## **6. TODO**
-
-- Implement robust, reliable caching (Like in Notification Module)
-
 ---
 
 This architecture ensures security, scalability, and maintainability while following best practices of build backend service and handling complex business logic.
