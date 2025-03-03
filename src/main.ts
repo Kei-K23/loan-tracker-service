@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
+import { apiReference } from '@scalar/nestjs-api-reference';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,15 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, documentConfig);
   SwaggerModule.setup('/swagger', app, document);
+
+  app.use(
+    '/scalar-docs',
+    apiReference({
+      spec: {
+        content: document,
+      },
+    }),
+  );
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));

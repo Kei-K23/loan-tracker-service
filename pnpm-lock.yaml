@@ -44,6 +44,9 @@ importers:
       '@prisma/client':
         specifier: ^6.4.1
         version: 6.4.1(prisma@6.4.1(typescript@5.7.3))(typescript@5.7.3)
+      '@scalar/nestjs-api-reference':
+        specifier: ^0.3.186
+        version: 0.3.186
       argon2:
         specifier: ^0.41.1
         version: 0.41.1
@@ -1142,6 +1145,18 @@ packages:
     peerDependencies:
       '@redis/client': ^1.0.0
 
+  '@scalar/nestjs-api-reference@0.3.186':
+    resolution: {integrity: sha512-c8DmH+3i4PX3DWtZwdnwl3ixQjV8mOpYSl3D5qrDHws3kq7xUDGu4uZXws3fvdcQQ4hQIkXdsgif4HZKPcBcGg==}
+    engines: {node: '>=18'}
+
+  '@scalar/openapi-types@0.1.9':
+    resolution: {integrity: sha512-HQQudOSQBU7ewzfnBW9LhDmBE2XOJgSfwrh5PlUB7zJup/kaRkBGNgV2wMjNz9Af/uztiU/xNrO179FysmUT+g==}
+    engines: {node: '>=18'}
+
+  '@scalar/types@0.0.36':
+    resolution: {integrity: sha512-Mfv9IptUoGqDJC40xg9nfI9/3brov59tKw2lq8tPpbmXItyG9EplckHPRUf2bYKGOOQPfySUATpEgHqOBiJt7g==}
+    engines: {node: '>=18'}
+
   '@scarf/scarf@1.4.0':
     resolution: {integrity: sha512-xxeapPiUXdZAE3che6f3xogoJPeZgig6omHEy1rIY5WVsB3H2BHNnZH+gHG6x91SCWyQCzWGsuL2Hh3ClO5/qQ==}
 
@@ -1429,6 +1444,9 @@ packages:
   '@typescript-eslint/visitor-keys@8.25.0':
     resolution: {integrity: sha512-kCYXKAum9CecGVHGij7muybDfTS2sD3t0L4bJsEZLkyrXUImiCTq1M3LG2SRtOhiHFwMR9wAFplpT6XHYjTkwQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@unhead/schema@1.11.20':
+    resolution: {integrity: sha512-0zWykKAaJdm+/Y7yi/Yds20PrUK7XabLe9c3IRcjnwYmSWY6z0Cr19VIs3ozCj8P+GhR+/TI2mwtGlueCEYouA==}
 
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
@@ -2473,6 +2491,9 @@ packages:
   hexoid@2.0.0:
     resolution: {integrity: sha512-qlspKUK7IlSQv2o+5I7yhUd7TxlOG2Vr5LTa3ve2XSNVKAL/n/u/7KLvKmFNimomDIKvZFXWHv0T12mv7rT8Aw==}
     engines: {node: '>=8'}
+
+  hookable@5.5.3:
+    resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
 
   hookified@1.7.1:
     resolution: {integrity: sha512-OXcdHsXeOiD7OJ5zvWj8Oy/6RCdLwntAX+wUrfemNcMGn6sux4xbEHi2QXwqePYhjQ/yvxxq2MvCRirdlHscBw==}
@@ -3903,6 +3924,9 @@ packages:
     resolution: {integrity: sha512-cYVsTjKl8b+FrnidjibDWskAv7UKOfcwaVZdp/it9n1s9fU3IkgDbhdIRKCW4JDsAlECJY0ytoVPT3sK6kideA==}
     engines: {node: '>=18'}
 
+  zhead@2.2.4:
+    resolution: {integrity: sha512-8F0OI5dpWIA5IGG5NHUg9staDwz/ZPxZtvGVf01j7vHqSyZ0raHY+78atOVxRqb73AotX22uV1pXt3gYSstGag==}
+
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -4927,6 +4951,17 @@ snapshots:
     dependencies:
       '@redis/client': 1.6.0
 
+  '@scalar/nestjs-api-reference@0.3.186':
+    dependencies:
+      '@scalar/types': 0.0.36
+
+  '@scalar/openapi-types@0.1.9': {}
+
+  '@scalar/types@0.0.36':
+    dependencies:
+      '@scalar/openapi-types': 0.1.9
+      '@unhead/schema': 1.11.20
+
   '@scarf/scarf@1.4.0': {}
 
   '@sec-ant/readable-stream@0.4.1': {}
@@ -5252,6 +5287,11 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.25.0
       eslint-visitor-keys: 4.2.0
+
+  '@unhead/schema@1.11.20':
+    dependencies:
+      hookable: 5.5.3
+      zhead: 2.2.4
 
   '@webassemblyjs/ast@1.14.1':
     dependencies:
@@ -6421,6 +6461,8 @@ snapshots:
       function-bind: 1.1.2
 
   hexoid@2.0.0: {}
+
+  hookable@5.5.3: {}
 
   hookified@1.7.1: {}
 
@@ -7982,3 +8024,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yoctocolors-cjs@2.1.2: {}
+
+  zhead@2.2.4: {}
