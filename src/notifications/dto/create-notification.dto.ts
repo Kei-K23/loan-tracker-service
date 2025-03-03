@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
   MaxLength,
@@ -19,4 +21,10 @@ export class CreateNotificationDto {
   @IsNotEmpty()
   @ApiProperty()
   userId: string;
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+  })
+  read?: boolean;
 }

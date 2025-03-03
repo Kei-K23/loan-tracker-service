@@ -22,7 +22,7 @@ export class NotificationsService {
   }
 
   async findOne(id: string) {
-    return await this.prisma.notification.findUnique({ where: { id } });
+    return await this.prisma.notification.findUniqueOrThrow({ where: { id } });
   }
 
   async update(id: string, updateNotificationDto: UpdateNotificationDto) {

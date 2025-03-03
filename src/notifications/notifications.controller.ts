@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   ParseUUIDPipe,
   UseGuards,
 } from '@nestjs/common';
@@ -44,7 +43,16 @@ export class NotificationsController {
   @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ type: NotificationEntity, isArray: true })
-  findAll(@Query('userId') userId?: string) {
+  findAll() {
+    return this.notificationsService.findAll();
+  }
+
+  @Get('/user/:userId')
+  @Roles('ADMIN', 'USER')
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: NotificationEntity, isArray: true })
+  findAllByUserId(@Param('userId', ParseUUIDPipe) userId: string) {
     return this.notificationsService.findAll(userId);
   }
 
@@ -67,6 +75,15 @@ export class NotificationsController {
     @Body() updateNotificationDto: UpdateNotificationDto,
   ) {
     return this.notificationsService.update(id, updateNotificationDto);
+  }
+
+  @Patch('/:id/read')
+  @Roles('ADMIN')
+  @UseGuards(JWTAuthGuard, RolesGuard, ThrottlerGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: NotificationEntity })
+  updateNotificationReadStatus(@Param('id', ParseUUIDPipe) id: string) {
+    return this.notificationsService.update(id, { read: true });
   }
 
   @Delete(':id')
