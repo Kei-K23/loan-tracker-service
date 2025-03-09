@@ -2,6 +2,12 @@
 
 This document outlines the system architecture for the **Loan Tracker Service**, a backend service built using **Node.js/NestJS**, **Prisma ORM**, and **PostgreSQL**. The service is designed to manage loans, payments, user profiles, notifications, and audit logs. It incorporates best practices such as **API rate limiting**, **cron jobs for email reminders**, **JWT-based authentication**, **role-based access control (RBAC)**, and more.
 
+Checkout architecture hand-drawing in [Excalidraw](https://excalidraw.com/#json=MUO6NKTmmj9Y4Y6sSaAbc,19-hq5jTrJDFR2ZPLFpavw)
+
+![Drawing1](/public/img/img1.png)
+
+![Drawing2](/public/img/img2.png)
+
 ---
 
 ## **1. High-Level Architecture Overview**
@@ -223,6 +229,14 @@ The system is divided into several layers and components, each responsible for s
 - **Nodemailer**: For sending emails.
 - **Scalar/Swagger**: For beautiful API documentation.
 - **Docker**: For containerization and easy deployment.
+
+---
+
+## **7**. TODO
+
+- Profile Management
+- JWT Refresh Token
+- Logging with Winston
 
 ---
 
